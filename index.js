@@ -14,6 +14,7 @@ const {
 const quests = require("./quests");
 const ask = require("./possibleTeams");
 const chalk = require("chalk");
+const fetch = require("node-fetch");
 
 let isMultiAccountMode = false;
 let account = "";
@@ -361,12 +362,50 @@ async function startBotPlayMatch(page, browser) {
   console.log("TEAM TO PLAY BY API:", teamToPlay);
   */
 
+  console.log(matchDetails);
+  let mappedSplinter = "";
+  matchDetails.splinters.forEach((splinter) => {
+    if (splinter === "fire") {
+      mappedSplinter += "5 ";
+    }
+    if (splinter === "water") {
+      mappedSplinter += "16 ";
+    }
+    if (splinter === "life") {
+      mappedSplinter += "261 ";
+    }
+    if (splinter === "death") {
+      mappedSplinter += "49 ";
+    }
+    if (splinter === "earth") {
+      mappedSplinter += "259 ";
+    }
+  });
+
+  const fetchedTeam = await fetch(
+    `https://api-splinterlands.manciomarket.com/api/get-team?mana_cap=${matchDetails.mana}&ruleset=${matchDetails.rules}&summoners=${mappedSplinter}`
+  )
+    .then((response) => {
+      console.log("response", response);
+      return response;
+    })
+    .then((team) => {
+      console.log("team", team);
+      return team.json();
+    })
+    .catch((error) => {
+      console.error(
+        "There has been a problem with your fetch operation:",
+        error
+      );
+    });
+
   const teamToPlay = {
-    summoner: 16,
-    cards: [16, 174],
+    summoner: fetchedTeam.game.summoner_id,
+    cards: fetchedTeam.formatted,
   };
 
-  console.log("MOCKED TEAM", teamToPlay);
+  console.log("FORMATTED TEAM", teamToPlay);
 
   if (teamToPlay) {
     page.click(".btn--create-team")[0];
