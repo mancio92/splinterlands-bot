@@ -81,12 +81,10 @@ async function startMulti() {
 
 async function startSingle() {
   const params = process.argv.slice(2);
-  let account = "";
-  let password = "";
-  if (params[0] === "theboring91") {
-    account = process.env.ACCOUNT_theboring91.split("@")[0];
-    password = process.env.PASSWORD_theboring91;
-  }
+
+  let account = process.env[`ACCOUNT_${params[0]}`].split("@")[0];
+  let password = process.env[`PASSWORD_${params[0]}`];
+
   //else {
   //  account = process.env.ACCOUNT.split("@")[0]; // split @ to prevent email use
   //  password = process.env.PASSWORD;
