@@ -401,11 +401,24 @@ async function startBotPlayMatch(page, browser) {
     });
 
   const teamToPlay = {
-    summoner: fetchedTeam.game.summoner_id,
+    summoner: fetchedTeam?.game?.summoner_id,
     cards: fetchedTeam.formatted,
   };
 
   console.log("FORMATTED TEAM", teamToPlay);
+
+  if (!teamToPlay.summoner) {
+    const params = process.argv.slice(2);
+    const account = process.env[`ACCOUNT_${params[0]}`].split("@")[0];
+    while (true) {
+      await sleep(500);
+      console.log(
+        chalk.bold.whiteBright.bgGreen(
+          `/************ BUG **************/${account}`
+        )
+      );
+    }
+  }
 
   if (teamToPlay) {
     page.click(".btn--create-team")[0];
@@ -615,17 +628,6 @@ async function run() {
   while (start) {
     console.log("Recover Status: ", page.recoverStatus);
     if (!process.env.API) {
-      console.log(chalk.bold.redBright.bgBlack("Dont pay scammers!"));
-      console.log(
-        chalk.bold.whiteBright.bgBlack(
-          "If you need support for the bot, join the telegram group https://t.me/splinterlandsbot and discord https://discord.gg/bR6cZDsFSX"
-        )
-      );
-      console.log(
-        chalk.bold.greenBright.bgBlack(
-          "If you interested in a higher winning rate with the private API, contact the owner via discord or telegram"
-        )
-      );
     }
     await startBotPlayMatch(page, browser)
       .then(async () => {
