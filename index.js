@@ -366,7 +366,7 @@ async function startBotPlayMatch(page, browser) {
   let mappedSplinter = "";
   matchDetails.splinters.forEach((splinter) => {
     if (splinter === "fire") {
-      mappedSplinter += "5 ";
+      mappedSplinter += "167 ";
     }
     if (splinter === "water") {
       mappedSplinter += "16 ";
@@ -375,7 +375,7 @@ async function startBotPlayMatch(page, browser) {
       mappedSplinter += "261 ";
     }
     if (splinter === "death") {
-      mappedSplinter += "49 ";
+      mappedSplinter += "145 ";
     }
     if (splinter === "earth") {
       mappedSplinter += "259 ";
