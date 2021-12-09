@@ -364,26 +364,48 @@ async function startBotPlayMatch(page, browser) {
 
   console.log(matchDetails);
   let mappedSplinter = "";
-  matchDetails.splinters.forEach((splinter) => {
-    if (splinter === "fire") {
-      mappedSplinter += "167 ";
-    }
-    if (splinter === "water") {
-      mappedSplinter += "16 ";
-    }
-    if (splinter === "life") {
-      mappedSplinter += "261 ";
-    }
-    if (splinter === "death") {
-      mappedSplinter += "145 ";
-    }
-    if (splinter === "earth") {
-      mappedSplinter += "259 ";
-    }
-  });
+  const params = process.argv.slice(2);
+  const combinationToChoose = process.env[`COMBINATION${params[0]}`];
+  if (combinationToChoose === "old") {
+    matchDetails.splinters.forEach((splinter) => {
+      if (splinter === "fire") {
+        mappedSplinter += "167 ";
+      }
+      if (splinter === "water") {
+        mappedSplinter += "16 ";
+      }
+      if (splinter === "life") {
+        mappedSplinter += "261 ";
+      }
+      if (splinter === "death") {
+        mappedSplinter += "145 ";
+      }
+      if (splinter === "earth") {
+        mappedSplinter += "259 ";
+      }
+    });
+  } else if (combinationToChoose === "caos") {
+    matchDetails.splinters.forEach((splinter) => {
+      if (splinter === "fire") {
+        mappedSplinter += "167 ";
+      }
+      if (splinter === "water") {
+        mappedSplinter += "178 ";
+      }
+      if (splinter === "life") {
+        mappedSplinter += "261 ";
+      }
+      if (splinter === "death") {
+        mappedSplinter += "145 ";
+      }
+      if (splinter === "earth") {
+        mappedSplinter += "439 ";
+      }
+    });
+  }
 
   const fetchedTeam = await fetch(
-    `https://api-splinterlands.manciomarket.com/api/get-team?mana_cap=${matchDetails.mana}&ruleset=${matchDetails.rules}&summoners=${mappedSplinter}`
+    `https://api-splinterlands.manciomarket.com/api/get-team?mana_cap=${matchDetails.mana}&ruleset=${matchDetails.rules}&summoners=${mappedSplinter}&combination=${combinationToChoose}`
   )
     .then((response) => {
       console.log("response", response);
@@ -407,7 +429,7 @@ async function startBotPlayMatch(page, browser) {
 
   console.log("FORMATTED TEAM", teamToPlay);
 
-  if (!teamToPlay.summoner) {
+  if (!teamToPlay.summoner && process.env.DEBUG) {
     const params = process.argv.slice(2);
     const account = process.env[`ACCOUNT_${params[0]}`].split("@")[0];
     while (true) {
