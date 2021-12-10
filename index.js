@@ -365,7 +365,7 @@ async function startBotPlayMatch(page, browser) {
   console.log(matchDetails);
   let mappedSplinter = "";
   const params = process.argv.slice(2);
-  const combinationToChoose = process.env[`COMBINATION${params[0]}`];
+  const combinationToChoose = process.env[`COMBINATION_${params[0]}`];
   if (combinationToChoose === "old") {
     matchDetails.splinters.forEach((splinter) => {
       if (splinter === "fire") {
