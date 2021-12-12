@@ -336,36 +336,37 @@ async function startBotPlayMatch(page, browser) {
     myCards: myCards,
   };
   await page.waitForTimeout(2000);
-  /*
-  const possibleTeams = await ask
-    .possibleTeams(matchDetails, account)
-    .catch((e) => console.log("Error from possible team API call: ", e));
-
-  if (possibleTeams && possibleTeams.length) {
-    console.log("Possible Teams based on your cards: ", possibleTeams.length);
-  } else {
-    console.log("Error:", matchDetails, possibleTeams);
-    throw new Error("NO TEAMS available to be played");
-  }
-
-  console.log(possibleTeams);
-  console.log(matchDetails);
-
-  //TEAM SELECTION change with my api
-  let teamToPlay = await ask.teamSelection(
-    possibleTeams,
-    matchDetails,
-    quest,
-    page.favouriteDeck
-  );
-
-  console.log("TEAM TO PLAY BY API:", teamToPlay);
-  */
 
   console.log(matchDetails);
-  let mappedSplinter = "";
   const params = process.argv.slice(2);
   const combinationToChoose = process.env[`COMBINATION_${params[0]}`];
+
+  if (matchDetails.myCards.length) {
+    if (process.env[`COMBINATION_${params[0]}`] === "old") {
+      if (matchDetails.myCards.includes(16)) {
+        console.log(
+          chalk.bold.whiteBright.bgGreen(
+            "I HAVE ALL THE OLD VERSION CARD TO PLAY"
+          )
+        );
+      } else {
+        process.exit();
+      }
+    }
+
+    if (process.env[`COMBINATION_${params[0]}`] === "caos") {
+      if (matchDetails.myCards.includes(261)) {
+        console.log(
+          chalk.bold.whiteBright.bgGreen("I HAVE ALL THE CAOS CARD TO PLAY")
+        );
+      } else {
+        process.exit();
+      }
+    }
+  }
+
+  let mappedSplinter = "";
+
   if (combinationToChoose === "old") {
     matchDetails.splinters.forEach((splinter) => {
       if (splinter === "fire") {
@@ -429,16 +430,21 @@ async function startBotPlayMatch(page, browser) {
 
   console.log("FORMATTED TEAM", teamToPlay);
 
-  if (!teamToPlay.summoner && process.env.DEBUG) {
-    const params = process.argv.slice(2);
-    const account = process.env[`ACCOUNT_${params[0]}`].split("@")[0];
-    while (true) {
-      await sleep(500);
-      console.log(
-        chalk.bold.whiteBright.bgGreen(
-          `/************ BUG **************/${account}`
-        )
-      );
+  if (!teamToPlay.summoner) {
+    if (process.env.DEBUG) {
+      const params = process.argv.slice(2);
+      const account = process.env[`ACCOUNT_${params[0]}`].split("@")[0];
+      while (true) {
+        await sleep(500);
+        console.log(
+          chalk.bold.whiteBright.bgRed(
+            `/************ BUG **************/${account}`
+          )
+        );
+      }
+    } else {
+      await page.waitForTimeout(180000);
+      throw new Error("No team to find");
     }
   }
 
