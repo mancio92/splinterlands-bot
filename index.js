@@ -397,7 +397,7 @@ async function startBotPlayMatch(page, browser) {
         mappedSplinter += "261 ";
       }
       if (splinter === "death") {
-        mappedSplinter += "145 ";
+        mappedSplinter += "438 ";
       }
       if (splinter === "earth") {
         mappedSplinter += "439 ";
