@@ -477,6 +477,16 @@ async function startBotPlayMatch(page, browser) {
           })
           .catch(() => {
             console.log(teamToPlay.summoner, "not clicked");
+            const params = process.argv.slice(2);
+            const account = process.env[`ACCOUNT_${params[0]}`].split("@")[0];
+            while (true) {
+              sleep(500);
+              console.log(
+                chalk.bold.whiteBright.bgRed(
+                  `/************ BUG **************/${account}`
+                )
+              );
+            }
           });
       });
     if (card.color(teamToPlay.cards[0]) === "Gold") {
@@ -491,6 +501,35 @@ async function startBotPlayMatch(page, browser) {
         .then((selector) => selector.click());
     }
     await page.waitForTimeout(5000);
+    //Check if card are here before click or else stop
+    for (i = 1; i <= 6; i++) {
+      teamToPlay.cards[i] &&
+        console.log("play: ", teamToPlay.cards[i]?.toString());
+      (await teamToPlay.cards[i])
+        ? page
+            .waitForXPath(
+              `//div[@card_detail_id="${teamToPlay.cards[i]?.toString()}"]`,
+              { timeout: 10000 }
+            )
+            .then((selector) => {
+              console.log(teamToPlay.cards[i], "found in the list");
+            })
+            .catch(async () => {
+              //TODO if the card is not clicked somehow we need to stop
+              console.log(teamToPlay.cards[i], "not found in the list");
+              const params = process.argv.slice(2);
+              const account = process.env[`ACCOUNT_${params[0]}`].split("@")[0];
+              console.log(
+                chalk.bold.whiteBright.bgRed(
+                  `/************ BUG **************/${account}`
+                )
+              );
+              process.exit();
+            })
+        : console.log("nocard ", i);
+      await page.waitForTimeout(1000);
+    }
+
     for (i = 1; i <= 6; i++) {
       teamToPlay.cards[i] &&
         console.log("play: ", teamToPlay.cards[i]?.toString());
@@ -504,7 +543,8 @@ async function startBotPlayMatch(page, browser) {
               selector.click();
               console.log(teamToPlay.cards[i], "clicked");
             })
-            .catch(() => {
+            .catch(async () => {
+              //TODO if the card is not clicked somehow we need to stop
               console.log(teamToPlay.cards[i], "not clicked");
             })
         : console.log("nocard ", i);
