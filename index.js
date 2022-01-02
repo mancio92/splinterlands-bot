@@ -156,7 +156,8 @@ async function startBotPlayMatch(page, browser) {
   }
 
   console.log("getting user quest info from splinterlands API...");
-  const quest = await getQuest();
+  const quest = null;
+  // const quest = await getQuest();
   if (!quest) {
     console.log(
       "Error for quest details. Splinterlands API didnt work or you used incorrect username, remove @ and dont use email"
@@ -363,6 +364,16 @@ async function startBotPlayMatch(page, browser) {
         process.exit();
       }
     }
+
+    if (process.env[`COMBINATION_${params[0]}`] === "thaddius-first") {
+      if (matchDetails.myCards.includes(261)) {
+        console.log(
+          chalk.bold.whiteBright.bgGreen("I HAVE ALL THE CAOS CARD TO PLAY")
+        );
+      } else {
+        process.exit();
+      }
+    }
   }
 
   let mappedSplinter = "";
@@ -401,6 +412,42 @@ async function startBotPlayMatch(page, browser) {
       }
       if (splinter === "earth") {
         mappedSplinter += "439 ";
+      }
+    });
+  } else if (combinationToChoose === "thaddius-first") {
+    matchDetails.splinters.forEach((splinter) => {
+      if (splinter === "death") {
+        mappedSplinter += "438 ";
+      }
+      if (splinter === "earth") {
+        mappedSplinter += "439 ";
+      }
+      if (splinter === "life") {
+        mappedSplinter += "261 ";
+      }
+      if (splinter === "fire") {
+        mappedSplinter += "167 ";
+      }
+      if (splinter === "water") {
+        mappedSplinter += "178 ";
+      }
+    });
+  } else if (combinationToChoose === "tarsa-first") {
+    matchDetails.splinters.forEach((splinter) => {
+      if (splinter === "death") {
+        mappedSplinter += "438 ";
+      }
+      if (splinter === "earth") {
+        mappedSplinter += "259 ";
+      }
+      if (splinter === "life") {
+        mappedSplinter += "261 ";
+      }
+      if (splinter === "fire") {
+        mappedSplinter += "440 ";
+      }
+      if (splinter === "water") {
+        mappedSplinter += "178 ";
       }
     });
   }
@@ -477,16 +524,6 @@ async function startBotPlayMatch(page, browser) {
           })
           .catch(() => {
             console.log(teamToPlay.summoner, "not clicked");
-            const params = process.argv.slice(2);
-            const account = process.env[`ACCOUNT_${params[0]}`].split("@")[0];
-            while (true) {
-              sleep(500);
-              console.log(
-                chalk.bold.whiteBright.bgRed(
-                  `/************ BUG **************/${account}`
-                )
-              );
-            }
           });
       });
     if (card.color(teamToPlay.cards[0]) === "Gold") {
@@ -515,16 +552,17 @@ async function startBotPlayMatch(page, browser) {
               console.log(teamToPlay.cards[i], "found in the list");
             })
             .catch(async () => {
-              //TODO if the card is not clicked somehow we need to stop
               console.log(teamToPlay.cards[i], "not found in the list");
               const params = process.argv.slice(2);
               const account = process.env[`ACCOUNT_${params[0]}`].split("@")[0];
-              console.log(
-                chalk.bold.whiteBright.bgRed(
-                  `/************ BUG **************/${account}`
-                )
-              );
-              process.exit();
+              //console.log(
+              //  chalk.bold.whiteBright.bgRed(
+              //    `/************ BUG **************/`
+              //  )
+              //);
+              if (teamToPlay.cards[i] !== 131 && teamToPlay.cards[i] !== 91) {
+                //process.exit();
+              }
             })
         : console.log("nocard ", i);
       await page.waitForTimeout(1000);
@@ -544,7 +582,6 @@ async function startBotPlayMatch(page, browser) {
               console.log(teamToPlay.cards[i], "clicked");
             })
             .catch(async () => {
-              //TODO if the card is not clicked somehow we need to stop
               console.log(teamToPlay.cards[i], "not clicked");
             })
         : console.log("nocard ", i);
