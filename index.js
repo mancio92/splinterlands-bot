@@ -374,6 +374,26 @@ async function startBotPlayMatch(page, browser) {
         process.exit();
       }
     }
+
+    if (process.env[`COMBINATION_${params[0]}`] === "tarsa-first") {
+      if (matchDetails.myCards.includes(248)) {
+        console.log(
+          chalk.bold.whiteBright.bgGreen("I HAVE ALL THE CAOS CARD TO PLAY")
+        );
+      } else {
+        process.exit();
+      }
+    }
+
+    if (process.env[`COMBINATION_${params[0]}`] === "crypto-mancer-first") {
+      if (matchDetails.myCards.includes(248)) {
+        console.log(
+          chalk.bold.whiteBright.bgGreen("I HAVE ALL THE CAOS CARD TO PLAY")
+        );
+      } else {
+        process.exit();
+      }
+    }
   }
 
   let mappedSplinter = "";
@@ -450,6 +470,24 @@ async function startBotPlayMatch(page, browser) {
         mappedSplinter += "178 ";
       }
     });
+  } else if (combinationToChoose === "crypto-mancer-first") {
+    matchDetails.splinters.forEach((splinter) => {
+      if (splinter === "death") {
+        mappedSplinter += "109 ";
+      }
+      if (splinter === "earth") {
+        mappedSplinter += "259 ";
+      }
+      if (splinter === "life") {
+        mappedSplinter += "156 ";
+      }
+      if (splinter === "fire") {
+        mappedSplinter += "440 ";
+      }
+      if (splinter === "water") {
+        mappedSplinter += "178 ";
+      }
+    });
   }
 
   const fetchedTeam = await fetch(
@@ -475,7 +513,12 @@ async function startBotPlayMatch(page, browser) {
     cards: fetchedTeam.formatted,
   };
 
-  console.log("FORMATTED TEAM", teamToPlay);
+  console.log(
+    "FORMATTED TEAM",
+    teamToPlay,
+    "ACCOUNT:",
+    process.env[`ACCOUNT_${params[0]}`].split("@")[0]
+  );
 
   if (!teamToPlay.summoner) {
     if (process.env.DEBUG) {
